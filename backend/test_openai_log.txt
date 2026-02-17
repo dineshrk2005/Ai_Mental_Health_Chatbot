@@ -1,0 +1,20 @@
+--- OPENAI/OPENROUTER TEST LOG ---
+API Key Prefix: sk-or-v1-b...
+
+🔄 Testing Model: google/gemini-2.0-flash-exp:free...
+❌ Failed with google/gemini-2.0-flash-exp:free:
+   Error: 429 Provider returned error
+
+🔄 Testing Model: google/gemini-2.0-flash-thinking-exp:free...
+❌ Failed with google/gemini-2.0-flash-thinking-exp:free:
+   Error: 400 google/gemini-2.0-flash-thinking-exp:free is not a valid model ID
+
+🔄 Testing Model: meta-llama/llama-3.2-1b-instruct:free...
+❌ Failed with meta-llama/llama-3.2-1b-instruct:free:
+   Error: 404 No endpoints found for meta-llama/llama-3.2-1b-instruct:free.
+
+🔄 Testing Model: meta-llama/llama-3.2-3b-instruct:free...
+✅ Success with meta-llama/llama-3.2-3b-instruct:free!
+Response: Hello! Yes, I'm working. I'm a computer program designed to simulate conversation, answer questions, and provide information on a wide range of topics. How can I assist you today?
+
+💡 RECOMMENDATION: Update your .env file with: OPENAI_MODEL=meta-llama/llama-3.2-3b-instruct:free
