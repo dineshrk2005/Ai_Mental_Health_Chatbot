@@ -37,23 +37,23 @@ const CrisisModal = ({ isOpen, onClose }) => {
                         </p>
 
                         <div className="space-y-3">
-                            <a href="tel:988" className="flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-xl transition-colors group">
+                            <a href="tel:108" className="flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-xl transition-colors group">
                                 <div className="flex items-center gap-3">
                                     <Phone className="text-red-500 group-hover:scale-110 transition-transform" size={20} />
                                     <div>
-                                        <div className="font-bold text-red-900">988 Lifeline (USA)</div>
+                                        <div className="font-bold text-red-900">108 Lifeline (India)</div>
                                         <div className="text-xs text-red-600">24/7 Confidential Support</div>
                                     </div>
                                 </div>
                                 <span className="px-3 py-1 bg-white text-red-600 text-sm font-bold rounded-full shadow-sm">Call</span>
                             </a>
 
-                            <a href="tel:112" className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors group">
+                            <a href="tel:108" className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors group">
                                 <div className="flex items-center gap-3">
                                     <Phone className="text-slate-500 group-hover:scale-110 transition-transform" size={20} />
                                     <div>
                                         <div className="font-bold text-slate-900">Emergency Services</div>
-                                        <div className="text-xs text-slate-600">Global Emergency Number</div>
+                                        <div className="text-xs text-slate-600">India Emergency Number</div>
                                     </div>
                                 </div>
                                 <span className="px-3 py-1 bg-white text-slate-600 text-sm font-bold rounded-full shadow-sm">Call 112</span>

@@ -18,12 +18,30 @@ const ChatInterface = ({ language = 'English' }) => {
     const langMap = {
         'English': 'en-US',
         'Tamil': 'ta-IN',
+        'Hindi': 'hi-IN',
         'Spanish': 'es-ES',
         'French': 'fr-FR',
         'German': 'de-DE',
-        'Hindi': 'hi-IN'
+        'Chinese': 'zh-CN',
+        'Japanese': 'ja-JP',
+        'Korean': 'ko-KR',
+        'Arabic': 'ar-SA',
+        'Portuguese': 'pt-BR',
+        'Italian': 'it-IT',
+        'Russian': 'ru-RU',
+        'Telugu': 'te-IN',
+        'Kannada': 'kn-IN',
+        'Malayalam': 'ml-IN',
+        'Bengali': 'bn-IN'
     };
     const userLang = langMap[language] || 'en-US';
+
+    const [voiceSupport, setVoiceSupport] = useState({
+        input: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+        output: 'speechSynthesis' in window
+    });
+
+    const [languageVoiceAvailable, setLanguageVoiceAvailable] = useState(true);
 
     // Speech Recognition Setup
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -31,7 +49,25 @@ const ChatInterface = ({ language = 'English' }) => {
 
     useEffect(() => {
         fetchHistory();
-    }, []);
+        checkVoiceSupport();
+    }, [language]);
+
+    const checkVoiceSupport = () => {
+        if ('speechSynthesis' in window) {
+            const voices = window.speechSynthesis.getVoices();
+            // Some browsers load voices asynchronously
+            if (voices.length === 0) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    const updatedVoices = window.speechSynthesis.getVoices();
+                    const hasVoice = updatedVoices.some(v => v.lang.startsWith(userLang.split('-')[0]));
+                    setLanguageVoiceAvailable(hasVoice);
+                };
+            } else {
+                const hasVoice = voices.some(v => v.lang.startsWith(userLang.split('-')[0]));
+                setLanguageVoiceAvailable(hasVoice);
+            }
+        }
+    };
 
     const fetchHistory = async () => {
         try {
@@ -62,9 +98,15 @@ const ChatInterface = ({ language = 'English' }) => {
             recognition.stop();
             setIsListening(false);
         } else {
-            recognition.lang = userLang;
-            recognition.start();
-            setIsListening(true);
+            try {
+                recognition.lang = userLang;
+                recognition.start();
+                setIsListening(true);
+            } catch (error) {
+                console.error("Speech recognition error:", error);
+                alert("Could not start speech recognition. It might not be supported for " + language);
+                setIsListening(false);
+            }
         }
     };
 
@@ -88,16 +130,25 @@ const ChatInterface = ({ language = 'English' }) => {
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = userLang;
-            utterance.rate = 0.9; // Slightly slower, more calming
+
+            utterance.rate = 1.0;
             utterance.pitch = 1.0;
 
-            // Try to select a "Google" voice if available for better quality
+            // Try to select a "Google" voice or a high quality voice for the language
             const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.lang.includes(userLang) && v.name.includes('Google'));
+            const preferredVoice = voices.find(v =>
+                v.lang.startsWith(userLang.split('-')[0]) &&
+                (v.name.includes('Google') || v.name.includes('Premium') || v.name.includes('Natural'))
+            ) || voices.find(v => v.lang.startsWith(userLang.split('-')[0]));
+
             if (preferredVoice) utterance.voice = preferredVoice;
 
             utterance.onstart = () => setIsSpeaking(true);
             utterance.onend = () => setIsSpeaking(false);
+            utterance.onerror = (e) => {
+                console.error("TTS Error:", e);
+                setIsSpeaking(false);
+            };
 
             window.speechSynthesis.speak(utterance);
         }
@@ -228,7 +279,9 @@ const ChatInterface = ({ language = 'English' }) => {
                     <button
                         type="button"
                         onClick={toggleListening}
-                        className={`p-2 transition-colors rounded-full ${isListening ? 'bg-red-50 text-red-500 animate-pulse' : 'bg-slate-50 text-slate-400 hover:text-teal-600 hover:bg-teal-50'}`}
+                        disabled={!voiceSupport.input}
+                        title={voiceSupport.input ? "Voice Input" : "Voice input not supported in this browser"}
+                        className={`p-2 transition-colors rounded-full ${!voiceSupport.input ? 'opacity-20 cursor-not-allowed' : isListening ? 'bg-red-50 text-red-500 animate-pulse' : 'bg-slate-50 text-slate-400 hover:text-teal-600 hover:bg-teal-50'}`}
                     >
                         <Mic size={20} />
                     </button>
@@ -237,7 +290,7 @@ const ChatInterface = ({ language = 'English' }) => {
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder={isListening ? "Listening..." : "Type or speak..."}
+                        placeholder={isListening ? "Listening..." : `Type or speak in ${language}...`}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 placeholder:text-slate-400"
                     />
 
@@ -247,7 +300,13 @@ const ChatInterface = ({ language = 'English' }) => {
                                 <StopCircle size={20} />
                             </button>
                         ) : (
-                            <button type="button" onClick={() => messages.length > 0 && speakText(messages[messages.length - 1].message)} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                            <button
+                                type="button"
+                                onClick={() => messages.length > 0 && speakText(messages[messages.length - 1].message)}
+                                disabled={!voiceSupport.output || !languageVoiceAvailable}
+                                title={!voiceSupport.output ? "Text-to-speech not supported" : !languageVoiceAvailable ? `Voice for ${language} not found on this device` : "Read message"}
+                                className={`p-2 transition-colors ${(!voiceSupport.output || !languageVoiceAvailable) ? 'opacity-20 cursor-not-allowed' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
                                 <Volume2 size={20} />
                             </button>
                         )}
@@ -261,7 +320,10 @@ const ChatInterface = ({ language = 'English' }) => {
                         </button>
                     </div>
                 </form>
-                <div className="text-center mt-2">
+                <div className="flex flex-col items-center mt-2 gap-1">
+                    {!languageVoiceAvailable && voiceSupport.output && (
+                        <p className="text-[9px] text-amber-500 font-medium">Note: Voice output for {language} may not be available on your system.</p>
+                    )}
                     <p className="text-[10px] text-slate-300">AI can make mistakes. Please verify important information.</p>
                 </div>
             </div>

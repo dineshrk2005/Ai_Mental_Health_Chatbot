@@ -4,7 +4,11 @@ import { MessageCircle, BarChart2, BookOpen, User, Shield, Globe, LogOut } from 
 const Sidebar = ({ activeTab, onTabChange, onLogout, currentLanguage, onLanguageChange }) => {
     const [showLangMenu, setShowLangMenu] = React.useState(false);
 
-    const languages = ['English', 'Tamil', 'Spanish', 'French', 'German', 'Hindi'];
+    const languages = [
+        'English', 'Tamil', 'Hindi', 'Spanish', 'French', 'German',
+        'Chinese', 'Japanese', 'Korean', 'Arabic', 'Portuguese',
+        'Italian', 'Russian', 'Telugu', 'Kannada', 'Malayalam', 'Bengali'
+    ];
 
     return (
         <div className="h-screen w-64 bg-slate-900 text-white flex flex-col p-4 flex-shrink-0 transition-all duration-300">
