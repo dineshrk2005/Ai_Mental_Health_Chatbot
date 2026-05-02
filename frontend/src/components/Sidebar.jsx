@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, BarChart2, BookOpen, User, Shield, Globe, LogOut } from 'lucide-react';
+import { MessageCircle, BarChart2, BookOpen, User, Shield, Globe, LogOut, Mic } from 'lucide-react';
 
 const Sidebar = ({ activeTab, onTabChange, onLogout, currentLanguage, onLanguageChange }) => {
     const [showLangMenu, setShowLangMenu] = React.useState(false);
@@ -54,6 +54,12 @@ const Sidebar = ({ activeTab, onTabChange, onLogout, currentLanguage, onLanguage
                     label="Relax Mind"
                     active={activeTab === 'relax'}
                     onClick={() => onTabChange('relax')}
+                />
+                <NavItem
+                    icon={<Mic size={20} />}
+                    label="Voice Tone"
+                    active={activeTab === 'voice'}
+                    onClick={() => onTabChange('voice')}
                 />
                 <NavItem
                     icon={<User size={20} />}

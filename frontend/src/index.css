@@ -3,7 +3,7 @@
 .glass-card {
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(6, 5, 5, 0.2);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
 }

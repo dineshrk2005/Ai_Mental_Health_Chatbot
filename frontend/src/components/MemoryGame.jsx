@@ -1,101 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { RefreshCw } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-const CARDS = [
-    { id: 1, content: '🌿' },
-    { id: 2, content: '🌸' },
-    { id: 3, content: '🌊' },
-    { id: 4, content: '☀️' },
-    { id: 5, content: '🌙' },
-    { id: 6, content: '⭐' },
-];
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import QueensGame from './QueensGame';
+import NumberPathGame from './NumberPathGame';
 
 const MemoryGame = () => {
-    const [cards, setCards] = useState([]);
-    const [flipped, setFlipped] = useState([]);
-    const [solved, setSolved] = useState([]);
-    const [disabled, setDisabled] = useState(false);
-    const [won, setWon] = useState(false);
-
-    const initializeGame = () => {
-        const duplicated = [...CARDS, ...CARDS];
-        const shuffled = duplicated.sort(() => Math.random() - 0.5).map((card, index) => ({ ...card, uniqueId: index }));
-        setCards(shuffled);
-        setFlipped([]);
-        setSolved([]);
-        setWon(false);
-        setDisabled(false);
-    };
-
-    useEffect(() => {
-        initializeGame();
-    }, []);
-
-    const handleClick = (id) => {
-        if (disabled || flipped.includes(id) || solved.includes(cards.find(c => c.uniqueId === id).id)) return;
-
-        if (flipped.length === 0) {
-            setFlipped([id]);
-            return;
-        }
-
-        if (flipped.length === 1) {
-            setDisabled(true);
-            setFlipped([...flipped, id]);
-            const firstCard = cards.find(c => c.uniqueId === flipped[0]);
-            const secondCard = cards.find(c => c.uniqueId === id);
-
-            if (firstCard.id === secondCard.id) {
-                setSolved([...solved, firstCard.id]);
-                setFlipped([]);
-                setDisabled(false);
-                if (solved.length + 1 === CARDS.length) setWon(true);
-            } else {
-                setTimeout(() => {
-                    setFlipped([]);
-                    setDisabled(false);
-                }, 1000);
-            }
-        }
-    };
+    // We repurpose "MemoryGame" into a generalized "Mindful Games Hub" since the user's nav points to relax/MemoryGame
+    const [activeGame, setActiveGame] = useState('queens');
 
     return (
-        <div className="bg-navy-800 p-6 rounded-2xl shadow-lg border border-slate-700 flex flex-col items-center">
-            <div className="flex justify-between w-full mb-6">
-                <h3 className="font-bold text-slate-200 text-lg">Relax Mind</h3>
-                <button onClick={initializeGame} className="text-teal-400 hover:text-teal-300 bg-slate-700/50 p-2 rounded-full hover:bg-slate-700 transition">
-                    <RefreshCw size={20} />
+        <div className="glass-card flex flex-col w-full max-w-2xl mx-auto min-h-[500px]">
+            <div className="flex border-b border-gray-200 mb-6">
+                <button 
+                    onClick={() => setActiveGame('queens')}
+                    className={`flex-1 py-3 text-sm font-semibold transition-colors border-b-2 ${activeGame === 'queens' ? 'border-teal-500 text-teal-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                >
+                    👑 Logic Queens
+                </button>
+                <button 
+                    onClick={() => setActiveGame('path')}
+                    className={`flex-1 py-3 text-sm font-semibold transition-colors border-b-2 ${activeGame === 'path' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                >
+                    🧩 Number Path
                 </button>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 w-full max-w-sm">
-                {cards.map((card) => (
-                    <motion.div
-                        key={card.uniqueId}
-                        className={`aspect-square rounded-xl cursor-pointer text-2xl flex items-center justify-center transition-all ${flipped.includes(card.uniqueId) || solved.includes(card.id)
-                                ? 'bg-teal-900/50 border-2 border-teal-500 shadow-teal-500/20 shadow-md'
-                                : 'bg-slate-700 hover:bg-slate-600 border border-slate-600'
-                            }`}
-                        onClick={() => handleClick(card.uniqueId)}
-                        animate={{ rotateY: flipped.includes(card.uniqueId) || solved.includes(card.id) ? 180 : 0 }}
-                    >
-                        {(flipped.includes(card.uniqueId) || solved.includes(card.id)) && (
-                            <span className="transform rotate-180 inline-block">{card.content}</span>
-                        )}
-                    </motion.div>
-                ))}
+            <div className="flex-1 flex items-center justify-center p-4">
+                <AnimatePresence mode="wait">
+                    {activeGame === 'queens' && (
+                        <motion.div 
+                            key="queens"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                        >
+                            <QueensGame />
+                        </motion.div>
+                    )}
+                    {activeGame === 'path' && (
+                        <motion.div 
+                            key="path"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                        >
+                            <NumberPathGame />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-
-            {won && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 text-teal-300 font-bold bg-teal-900/30 px-6 py-3 rounded-lg border border-teal-500/30"
-                >
-                    Peace found! 🌿
-                </motion.div>
-            )}
         </div>
     );
 };

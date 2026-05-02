@@ -15,6 +15,7 @@ import MemoryGame from '../components/MemoryGame';
 import StepTracker from '../components/StepTracker';
 import LocationFinder from '../components/LocationFinder';
 import WellnessLibrary from '../components/WellnessLibrary';
+import VoiceInput from '../components/VoiceInput';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -109,6 +110,18 @@ const Dashboard = () => {
                         <MemoryGame />
                     </div>
                 );
+            case 'voice':
+                return (
+                    <div className="p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+                        <header className="mb-8">
+                            <h2 className="text-3xl font-bold text-teal-400">Voice Tone Detection</h2>
+                            <p className="text-slate-400">Capture your voice and analyze emotional features like energy, pitch, and MFCC.</p>
+                        </header>
+                        <div className="max-w-2xl mx-auto">
+                            <VoiceInput />
+                        </div>
+                    </div>
+                );
             case 'profile':
                 return <ProfileSection />;
             case 'crisis':
@@ -123,6 +136,7 @@ const Dashboard = () => {
                                     <h3 className="text-xl font-bold text-white">Emergency Hotlines</h3>
                                     <div className="flex flex-col gap-3">
                                         <a href="tel:988" className="px-6 py-3 bg-red-600 text-white rounded-xl font-bold shadow-lg hover:bg-red-700 text-center transition-transform hover:scale-105">Call 988 (USA)</a>
+                                        <a href="tel:14416" className="px-6 py-3 bg-orange-600 text-white rounded-xl font-bold shadow-lg hover:bg-orange-700 text-center transition-transform hover:scale-105">Call 14416 (India)</a>
                                         <a href="tel:112" className="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold shadow-lg hover:bg-slate-600 text-center transition-transform hover:scale-105">Call 112 (Global)</a>
                                     </div>
                                 </div>
