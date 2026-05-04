@@ -80,7 +80,8 @@ const VoiceInput = ({ onTranscriptionAndAnalysis }) => {
 
     try {
       // Send to python service
-      const response = await fetch('http://localhost:5001/api/analyze-voice', {
+      const voiceApiUrl = import.meta.env.VITE_VOICE_API_URL || 'http://localhost:5001/api/analyze-voice';
+      const response = await fetch(voiceApiUrl, {
         method: 'POST',
         body: formData,
       });
