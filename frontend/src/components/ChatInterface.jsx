@@ -232,7 +232,7 @@ const ChatInterface = ({ language = 'English' }) => {
     );
 
     return (
-        <div className="flex flex-col h-screen bg-white">
+        <div className="flex flex-col h-full bg-white">
             {/* Main Chat Area */}
             <div className="flex-1 overflow-y-auto relative">
                 {messages.length === 0 ? (

@@ -7,7 +7,7 @@ import Journaling from '../components/Journaling';
 import MeditationPlayer from '../components/MeditationPlayer';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, FileText } from 'lucide-react';
+import { LayoutDashboard, FileText, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import ProfileSection from '../components/ProfileSection';
@@ -21,6 +21,7 @@ const Dashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('chat');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [moodHistory, setMoodHistory] = useState([]);
     const [currentLanguage, setCurrentLanguage] = useState('English');
 
@@ -157,15 +158,46 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="flex h-screen bg-navy-900 overflow-hidden">
-            <Sidebar
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-                onLogout={handleLogout}
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-            />
-            <main className="flex-1 flex flex-col h-full relative overflow-y-auto bg-navy-900">
+        <div className="flex h-screen bg-navy-900 overflow-hidden relative">
+            {/* Mobile Sidebar Overlay */}
+            {isMobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+            
+            {/* Sidebar Container */}
+            <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-300 ease-in-out flex`}>
+                <Sidebar
+                    activeTab={activeTab}
+                    onTabChange={(tab) => {
+                        setActiveTab(tab);
+                        setIsMobileMenuOpen(false);
+                    }}
+                    onLogout={handleLogout}
+                    currentLanguage={currentLanguage}
+                    onLanguageChange={setCurrentLanguage}
+                />
+            </div>
+
+            <main className="flex-1 flex flex-col h-full relative overflow-y-auto bg-navy-900 w-full md:w-auto">
+                {/* Mobile Header */}
+                <div className="md:hidden flex items-center justify-between bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30">
+                    <div className="flex items-center gap-2 text-teal-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        <h1 className="text-xl font-bold text-white font-sans">Serenity AI</h1>
+                    </div>
+                    <button 
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+                    >
+                        <Menu size={24} />
+                    </button>
+                </div>
+
                 {renderContent()}
             </main>
         </div>
